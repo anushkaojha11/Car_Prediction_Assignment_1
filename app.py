@@ -32,52 +32,80 @@ default_values = {
 
 app.layout = dbc.Container(
     dbc.Row(
-        dbc.Col(
-            dbc.Card(
+        dbc.Col([
+
+            # Title card
+            dbc.Card([
+                dbc.CardHeader("Car Price Prediction", 
+                               className="bg-primary text-white fs-4 text-center"),
                 dbc.CardBody([
-                    html.H1("Car Price Prediction", className="text-center mb-4"),
-                    html.Hr(),
+                    html.P("Fill out the details below to estimate the price", 
+                           className="text-center text-muted mb-0")
+                ])
+            ], className="shadow mb-4"),
+
+            # Vehicle Info
+            dbc.Card([
+                dbc.CardHeader("Step 1: Vehicle Info", 
+                               className="bg-info text-white fs-5"),
+                dbc.CardBody([
                     dbc.Row([
                         dbc.Col([
-                            dbc.Label("Brand"),
+                            dbc.Label("Brand", className="fw-bold"),
                             dcc.Dropdown(id="brand", options=brand_cat, value=brand_cat[0])
-                        ], width=4),
+                        ], md=6),
 
                         dbc.Col([
-                            dbc.Label("Year"),
+                            dbc.Label("Year", className="fw-bold"),
                             dcc.Dropdown(
                                 id="year",
-                                options=[{"label": y, "value": y} for y in sorted(vehicle_df['year'].unique())],
+                                options=[{"label": y, "value": y} 
+                                         for y in sorted(vehicle_df['year'].unique())],
                                 value=vehicle_df['year'].min()
                             )
-                        ], width=4),
+                        ], md=6),
+                    ])
+                ])
+            ], className="shadow mb-4"),
 
-                    ], className="mb-3"),
-
+            # Performance
+            dbc.Card([
+                dbc.CardHeader("Step 2: Performance Details", 
+                               className="bg-warning text-dark fs-5"),
+                dbc.CardBody([
                     dbc.Row([
                         dbc.Col([
-                            dbc.Label("Mileage (km/l)"),
-                            dcc.Input(id="mileage", type="number", value=0, style={"width": "100%"})
-                        ], width=6),
+                            dbc.Label("Mileage (km/l)", className="fw-bold"),
+                            dcc.Input(id="mileage", type="number", value=0, 
+                                      style={"width": "100%"})
+                        ], md=6),
 
                         dbc.Col([
-                            dbc.Label("Max Power (bhp)"),
-                            dcc.Input(id="max_power", type="number", value=0, style={"width": "100%"})
-                        ], width=6),
-                    ], className="mb-3"),
+                            dbc.Label("Max Power (bhp)", className="fw-bold"),
+                            dcc.Input(id="max_power", type="number", value=0, 
+                                      style={"width": "100%"})
+                        ], md=6),
+                    ])
+                ])
+            ], className="shadow mb-4"),
 
-                    dbc.Button("Predict Price", id="submit", color="primary", className="w-100 mb-3"),
-                    html.Div(id="prediction_result", className="text-center fs-4 fw-bold")
-                ]),
-                className="shadow p-4"
-            ),
-            width=8,  # make card 8/12 of the page width
-            className="mx-auto my-5"  # center horizontally and add vertical margin
-        )
+            # Prediction
+            dbc.Card([
+                dbc.CardHeader("Step 3: Get Prediction", 
+                               className="bg-success text-white fs-5"),
+                dbc.CardBody([
+                    dbc.Button("Predict Price", id="submit", 
+                               color="success", className="w-100 mb-3 fs-5"),
+                    html.Div(id="prediction_result", 
+                             className="text-center fs-3 fw-bold text-success")
+                ])
+            ], className="shadow")
+        ],
+        md=8, className="mx-auto"),  
     ),
-    fluid=True
+    fluid=True,
+    className="my-5"
 )
-
 
 @callback(
     Output("prediction_result", "children"),
@@ -118,7 +146,7 @@ def predict_price(n, max_power, mileage, year, brand):
     price = np.round(np.exp(model.predict(X)), 2)[0]
    
 
-    return f"The predicted price of the model is: ${price}"
+    return f"The predicted price of the model is: ฿{price}"
 
 #Running app
 
